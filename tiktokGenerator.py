@@ -4,6 +4,9 @@ import pandas as pd
 import cv2
 import os
 import tarfile
+import datetime
+
+date = {datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}
 
 def list_videos_in_directory(data_dir):
     videos = []
@@ -48,10 +51,10 @@ def generate_video(data_loader, video_path):
     for batch in data_loader:
         for frame in batch:
             video_writer.write(frame)
-            
+
 
     video_writer.release()
-    print("Video generated at {}".format(video_path))
+    print(f"Video generated at {date}".format(video_path))
 
 # decomprimere il file .tar.gz
 if not os.path.isdir("kinetics700_2020"):
@@ -65,5 +68,8 @@ else:
 data_dir = "kinetics700_2020"
 kinetics_dataset = KineticsDataset(data_dir)
 data_loader = DataLoader(kinetics_dataset, batch_size=32, shuffle=True)
-video_path = "generated_video.mp4"
+video_path = f"generated_video_{date}.mp4"
 generate_video(data_loader, video_path)
+
+# sistema il codice tenendo conto che i video da analizzare vengono forniti dal file .json che si ottiene quando si decomprime il file .tar.gz
+# https://github.com/Claudio-DiGiovanni/vid-tiktok-gen
