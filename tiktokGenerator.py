@@ -53,8 +53,12 @@ def generate_video(data_loader, video_path):
     print("Video generated at {}".format(video_path))
 
 # decomprimere il file .tar.gz
-with tarfile.open("kinetics700_2020.tar.gz", "r:gz") as tar:
-    tar.extractall()
+if not os.path.isdir("kinetics700_2020"):
+    with tarfile.open("kinetics700_2020.tar.gz", "r:gz") as tar:
+        tar.extractall()
+    print("File decompresso con successo.")
+else:
+    print("La cartella kinetics700_2020 esiste già, non viene decompresso nuovamente.")
 
 # utilizzare la cartella decompressa come percorso per data_dir
 data_dir = "kinetics700_2020"
