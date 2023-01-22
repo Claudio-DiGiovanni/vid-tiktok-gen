@@ -48,6 +48,7 @@ def generate_video(data_loader, video_path):
     for batch in data_loader:
         for frame in batch:
             video_writer.write(frame)
+            
 
     video_writer.release()
     print("Video generated at {}".format(video_path))
