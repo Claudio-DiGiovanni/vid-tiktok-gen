@@ -1,4 +1,4 @@
-import torch
+import json
 from torch.utils.data import DataLoader, Dataset
 import pandas as pd
 import cv2
@@ -8,14 +8,18 @@ import datetime
 
 date = {datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}
 
-def list_videos_in_directory(data_dir):
-    videos = []
-    for file in os.listdir(data_dir):
-        if file.endswith(".csv"):
-            with open(os.path.join(data_dir, file)) as f:
-                for line in f:
-                    videos.append(line.strip())
-    return videos
+def list_videos_in_directory(url):
+    with tarfile.open(url, 'r:gz') as tar:
+        tar.extractall()
+        
+    video_list = []
+    for member in tar.getmembers():
+        if member.name.endswith('.json'):
+            with tar.extractfile(member) as file:
+                data = json.load(file)
+                video_list.append(data['video_url'])
+    print(video_list)
+    return video_list
 
 
 def load_video(video_path):
@@ -27,6 +31,7 @@ def load_video(video_path):
             break
         frames.append(cv2.resize(frame, (224, 224)))
     video.release()
+    print(frames)
     return frames
 
 class KineticsDataset(Dataset):
@@ -71,5 +76,5 @@ data_loader = DataLoader(kinetics_dataset, batch_size=32, shuffle=True)
 video_path = f"generated_video_{date}.mp4"
 generate_video(data_loader, video_path)
 
-# sistema il codice tenendo conto che i video da analizzare vengono forniti dal file .json che si ottiene quando si decomprime il file .tar.gz
+# sistema il codice python che ti fornisco a questo indirizzo tenendo conto che i video da analizzare vengono forniti dai file .json che si ottengono quando si decomprime il file .tar.gz
 # https://github.com/Claudio-DiGiovanni/vid-tiktok-gen
